@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufWriter, Cursor},
+    io::BufWriter,
     path::PathBuf,
 };
 
@@ -50,7 +50,7 @@ pub fn save_image(
         }
         SaveFormat::Webp(_quality) => {
             let rgba = img.to_rgba8();
-            let mut encoder = WebPEncoder::new(&mut writer);
+            let encoder = WebPEncoder::new_lossless(&mut writer);
             encoder
                 .write_image(rgba.as_raw(), img.width(), img.height(), ColorType::Rgba8)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
