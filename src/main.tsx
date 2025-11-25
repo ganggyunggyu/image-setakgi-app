@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { QueryProvider } from '@/app/provider/query-client';
 import { HomePage } from '@/pages/home/HomePage';
 import '@/app/styles/tailwind.css';
-import '@/app/styles/global.css';
 
 const root = document.getElementById('root');
 
