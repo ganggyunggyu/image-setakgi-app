@@ -16,7 +16,7 @@ rand = "0.8"
 rayon = "1.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tauri = { version = "1.5", features = ["dialog-open", "fs-all", "path-all"] }
+tauri = { version = "1.5", features = ["dialog-open", "fs-all", "path-all", "custom-protocol"] }
 thiserror = "1.0"
 
 [build-dependencies]
