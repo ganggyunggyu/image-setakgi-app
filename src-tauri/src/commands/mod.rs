@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     config::{self, Options},
-    image_ops::{build_pipeline, apply_saturation},
-    output,
+    image_ops::{apply_saturation, build_pipeline},
+    output::{self, SaveFormat},
     preview::{self, PreviewPayload},
 };
 
@@ -67,14 +67,14 @@ pub fn convert_all(
     })
 }
 
-fn choose_format(name: &str, options: &Options) -> image::ImageOutputFormat {
+fn choose_format(name: &str, options: &Options) -> SaveFormat {
     let lower = name.to_lowercase();
     if lower.ends_with(".webp") {
-        image::ImageOutputFormat::WebP(options.webp_quality)
+        SaveFormat::Webp(options.webp_quality)
     } else if lower.ends_with(".png") {
-        image::ImageOutputFormat::Png
+        SaveFormat::Png
     } else {
-        image::ImageOutputFormat::Jpeg(options.jpeg_quality)
+        SaveFormat::Jpeg(options.jpeg_quality)
     }
 }
 

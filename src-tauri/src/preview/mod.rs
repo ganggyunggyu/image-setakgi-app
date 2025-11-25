@@ -1,4 +1,4 @@
-use image::{DynamicImage, ImageOutputFormat};
+use image::ImageOutputFormat;
 use serde::{Deserialize, Serialize};
 
 use crate::{config::Options, image_ops::{build_pipeline, apply_saturation}};
@@ -24,8 +24,10 @@ pub fn generate_preview(payload: PreviewPayload) -> Result<PreviewResponse, Stri
     if let Some(sat) = payload.saturation {
         out = apply_saturation(&out, sat);
     }
-    let mut buf = Vec::new();
-    out.write_to(&mut buf, ImageOutputFormat::Png)
+    let mut cursor = std::io::Cursor::new(Vec::new());
+    out.write_to(&mut cursor, ImageOutputFormat::Png)
         .map_err(|e| e.to_string())?;
-    Ok(PreviewResponse { bytes: buf })
+    Ok(PreviewResponse {
+        bytes: cursor.into_inner(),
+    })
 }

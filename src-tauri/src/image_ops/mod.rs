@@ -53,7 +53,7 @@ impl ImageTransform for BrightnessContrastTransform {
         let b_delta = rng.gen_range(-self.brightness_range..=self.brightness_range) as i32;
         let c_delta = rng.gen_range(-self.contrast_range..=self.contrast_range);
         let adjusted = imageops::colorops::brighten(&img, b_delta);
-        imageops::colorops::contrast(&adjusted, c_delta as f32)
+        DynamicImage::ImageRgba8(imageops::colorops::contrast(&adjusted, c_delta as f32))
     }
 }
 
@@ -126,17 +126,18 @@ pub fn build_pipeline(options: &Options) -> Pipeline {
 
 pub fn apply_saturation(img: &DynamicImage, amount: f32) -> DynamicImage {
     let rgba = img.to_rgba8();
-    let saturated: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::from_fn(rgba.width(), rgba.height(), |x, y| {
-        let mut p = rgba.get_pixel(x, y);
-        let channels = p.channels_mut();
-        let r = channels[0] as f32;
-        let g = channels[1] as f32;
-        let b = channels[2] as f32;
-        let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        channels[0] = ((r - luma) * amount + luma).clamp(0.0, 255.0) as u8;
-        channels[1] = ((g - luma) * amount + luma).clamp(0.0, 255.0) as u8;
-        channels[2] = ((b - luma) * amount + luma).clamp(0.0, 255.0) as u8;
-        p
-    });
+    let saturated: ImageBuffer<Rgba<u8>, Vec<u8>> =
+        ImageBuffer::from_fn(rgba.width(), rgba.height(), |x, y| {
+            let mut p = *rgba.get_pixel(x, y);
+            let channels = p.channels_mut();
+            let r = channels[0] as f32;
+            let g = channels[1] as f32;
+            let b = channels[2] as f32;
+            let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            channels[0] = ((r - luma) * amount + luma).clamp(0.0, 255.0) as u8;
+            channels[1] = ((g - luma) * amount + luma).clamp(0.0, 255.0) as u8;
+            channels[2] = ((b - luma) * amount + luma).clamp(0.0, 255.0) as u8;
+            p
+        });
     DynamicImage::ImageRgba8(saturated)
 }
