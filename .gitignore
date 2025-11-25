@@ -1,0 +1,20 @@
+# Node/Tauri artifacts
+node_modules/
+dist/
+.vite/
+
+# Rust/target
+target/
+src-tauri/target/
+
+# Env/OS
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
