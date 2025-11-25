@@ -5,7 +5,7 @@ use std::{
 };
 
 use chrono::Local;
-use image::{codecs::webp::WebPEncoder, ColorType, DynamicImage, ImageOutputFormat};
+use image::{codecs::webp::WebPEncoder, ColorType, DynamicImage, ImageEncoder, ImageOutputFormat};
 
 pub enum SaveFormat {
     Png,
@@ -48,12 +48,12 @@ pub fn save_image(
             img.write_to(&mut writer, ImageOutputFormat::Jpeg(quality))
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
         }
-        SaveFormat::Webp(quality) => {
-            let mut buf = Cursor::new(Vec::new());
-            WebPEncoder::new_with_quality(&mut buf, quality as f32)
-                .encode(img.to_rgba8().as_raw(), img.width(), img.height(), ColorType::Rgba8)
+        SaveFormat::Webp(_quality) => {
+            let rgba = img.to_rgba8();
+            let mut encoder = WebPEncoder::new(&mut writer);
+            encoder
+                .write_image(rgba.as_raw(), img.width(), img.height(), ColorType::Rgba8)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
-            std::io::copy(&mut Cursor::new(buf.into_inner()), &mut writer)?;
         }
     }
 
